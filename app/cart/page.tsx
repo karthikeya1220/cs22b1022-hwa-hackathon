@@ -4,13 +4,17 @@ import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
 import { CartLine } from "@/components/cart/CartLine";
 import { formatPrice, PRODUCT } from "@/lib/product";
+import {
+  FREE_SHIPPING_THRESHOLD,
+  orderTotals,
+} from "@/lib/pricing";
 
 export default function CartPage() {
   const { items, count, subtotalCents, clear } = useCart();
-  const freeShipThreshold = 7500;
-  const shippingCents =
-    items.length === 0 || subtotalCents >= freeShipThreshold ? 0 : 600;
-  const totalCents = subtotalCents + shippingCents;
+  const { shipping: shippingCents, total: totalCents } = orderTotals(
+    subtotalCents,
+    count,
+  );
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
@@ -91,8 +95,8 @@ export default function CartPage() {
               </div>
               {shippingCents > 0 && (
                 <p className="text-xs text-muted">
-                  Free shipping over {formatPrice(freeShipThreshold)} — add{" "}
-                  {formatPrice(freeShipThreshold - subtotalCents)} more.
+                  Free shipping over {formatPrice(FREE_SHIPPING_THRESHOLD)} — add{" "}
+                  {formatPrice(FREE_SHIPPING_THRESHOLD - subtotalCents)} more.
                 </p>
               )}
               <div className="flex justify-between border-t border-line pt-3">
