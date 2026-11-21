@@ -6,15 +6,17 @@ type Props = {
   className?: string;
   /** Hide the caption strip (used when embedded in a larger stage). */
   bare?: boolean;
+  /** Tiny thumbnail rendering (cart lines). */
+  compact?: boolean;
 };
 
 /**
  * ROLLOVER ONE — pure CSS product render with layered depth,
  * lighting, and contact shadow. Shared across hero, buy box,
- * mode explorer, and specs so the object stays continuous.
+ * mode explorer, cart, and specs so the object stays continuous.
  *
- * Modes only re-pose the same object (track / tilt / gate cues);
- * they never invent hardware.
+ * Mode cues are always mounted and cross-fade via opacity —
+ * the product never unmounts or disappears when modes change.
  */
 export function ProductVisual({
   finishHex,
@@ -22,10 +24,85 @@ export function ProductVisual({
   mode = "idle",
   className = "",
   bare = false,
+  compact = false,
 }: Props) {
   const roll =
     mode === "roll" ? -14 : mode === "puzzle" ? 6 : mode === "lick" ? 0 : 0;
-  const lift = mode === "roll" ? 6 : mode === "puzzle" ? 2 : 0;
+  const lift = mode === "roll" ? 8 : mode === "puzzle" ? 3 : 0;
+
+  const cue = (on: boolean, delay = "0ms") => ({
+    opacity: on ? 1 : 0,
+    transition: `opacity 0.45s ease ${delay}`,
+  });
+
+  if (compact) {
+    return (
+      <div
+        className={`relative flex items-center justify-center overflow-hidden ${className}`}
+        role="img"
+        aria-label={`ROLLOVER ONE in ${finishName}`}
+      >
+        <div
+          className="relative"
+          style={{
+            transform: "perspective(600px) rotateX(14deg)",
+            transformStyle: "preserve-3d",
+          }}
+        >
+          <div
+            className="absolute left-1/2 top-full h-3 w-[80%] -translate-x-1/2 -translate-y-1/3 rounded-[50%] blur-[6px]"
+            style={{
+              background:
+                "radial-gradient(ellipse, rgba(28,26,23,0.28), transparent 70%)",
+            }}
+            aria-hidden
+          />
+          <div className="relative h-12 w-12 sm:h-14 sm:w-14">
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: `linear-gradient(180deg, color-mix(in srgb, ${finishHex} 75%, black), color-mix(in srgb, ${finishHex} 50%, black))`,
+                transform: "translateY(3px)",
+                boxShadow: "0 6px 12px -4px rgba(28,26,23,0.4)",
+              }}
+              aria-hidden
+            />
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: `
+                  radial-gradient(circle at 32% 24%, rgba(255,255,255,0.5), transparent 42%),
+                  radial-gradient(circle at 50% 45%, color-mix(in srgb, ${finishHex} 88%, white) 0%, ${finishHex} 50%, color-mix(in srgb, ${finishHex} 60%, black) 100%)
+                `,
+                boxShadow: `
+                  inset 0 1px 3px rgba(255,255,255,0.35),
+                  inset 0 -4px 10px rgba(0,0,0,0.22),
+                  0 10px 18px -8px rgba(28,26,23,0.4)
+                `,
+              }}
+              aria-hidden
+            />
+            <div
+              className="absolute inset-[22%] rounded-full"
+              style={{
+                background: `radial-gradient(circle at 40% 30%, #f7f3ec, #efe8db)`,
+                boxShadow: "inset 0 4px 8px rgba(28,26,23,0.16)",
+              }}
+              aria-hidden
+            />
+            <div
+              className="absolute left-1/2 top-1/2 h-[38%] w-[38%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+              style={{
+                background: `radial-gradient(circle at 35% 30%, color-mix(in srgb, ${finishHex} 85%, white), ${finishHex})`,
+                boxShadow: "inset 0 -3px 6px rgba(0,0,0,0.25)",
+              }}
+              aria-hidden
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -52,24 +129,34 @@ export function ProductVisual({
             transition: "transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
-          {/* soft ground shadow */}
+          {/* soft ground shadow — wider, deeper contact */}
           <div
-            className="absolute left-1/2 top-full h-10 w-[85%] -translate-x-1/2 -translate-y-1/3 rounded-[50%] blur-xl"
+            className="absolute left-1/2 top-full h-14 w-[95%] -translate-x-1/2 -translate-y-1/3 rounded-[50%] blur-2xl"
             style={{
-              background: `radial-gradient(ellipse, rgba(28,26,23,${mode === "roll" ? 0.28 : 0.22}), transparent 70%)`,
+              background: `radial-gradient(ellipse, rgba(28,26,23,${mode === "roll" ? 0.34 : 0.28}) 0%, rgba(28,26,23,0.12) 45%, transparent 72%)`,
+              transition: "background 0.5s ease",
+            }}
+            aria-hidden
+          />
+          {/* secondary tight contact shadow */}
+          <div
+            className="absolute left-1/2 top-full h-5 w-[70%] -translate-x-1/2 -translate-y-1/4 rounded-[50%] blur-md"
+            style={{
+              background:
+                "radial-gradient(ellipse, rgba(28,26,23,0.35), transparent 70%)",
             }}
             aria-hidden
           />
 
           {/* disc body */}
-          <div className="relative h-56 w-56 sm:h-[19rem] sm:w-[19rem] md:h-[21rem] md:w-[21rem]">
+          <div className="relative h-56 w-56 sm:h-[21rem] sm:w-[21rem] md:h-[24rem] md:w-[24rem]">
             {/* side wall / thickness */}
             <div
               className="absolute inset-0 rounded-full"
               style={{
                 background: `linear-gradient(180deg, color-mix(in srgb, ${finishHex} 75%, black) 0%, color-mix(in srgb, ${finishHex} 55%, black) 100%)`,
-                transform: "translateY(10px)",
-                boxShadow: "0 18px 36px -12px rgba(28,26,23,0.45)",
+                transform: "translateY(12px)",
+                boxShadow: "0 22px 42px -12px rgba(28,26,23,0.5)",
               }}
               aria-hidden
             />
@@ -79,7 +166,7 @@ export function ProductVisual({
               className="absolute inset-0 rounded-full"
               style={{
                 background: `
-                  radial-gradient(circle at 32% 24%, rgba(255,255,255,0.55), transparent 42%),
+                  radial-gradient(circle at 32% 24%, rgba(255,255,255,0.58), transparent 42%),
                   radial-gradient(circle at 70% 78%, color-mix(in srgb, ${finishHex} 50%, black), transparent 50%),
                   radial-gradient(circle at 50% 45%, color-mix(in srgb, ${finishHex} 88%, white) 0%, ${finishHex} 48%, color-mix(in srgb, ${finishHex} 65%, black) 100%)
                 `,
@@ -87,7 +174,7 @@ export function ProductVisual({
                   inset 0 2px 6px rgba(255,255,255,0.35),
                   inset 0 -10px 24px rgba(0,0,0,0.22),
                   inset 0 0 0 1px color-mix(in srgb, ${finishHex} 40%, black),
-                  0 28px 50px -22px rgba(28,26,23,0.4)
+                  0 32px 56px -22px rgba(28,26,23,0.45)
                 `,
               }}
               aria-hidden
@@ -115,7 +202,7 @@ export function ProductVisual({
                   radial-gradient(circle at 40% 30%, color-mix(in srgb, ${finishHex} 18%, #f7f3ec), #f3ede3 55%, color-mix(in srgb, ${finishHex} 12%, #e8e0d4) 100%)
                 `,
                 boxShadow: `
-                  inset 0 10px 22px rgba(28,26,23,0.18),
+                  inset 0 12px 26px rgba(28,26,23,0.2),
                   inset 0 -3px 8px rgba(255,255,255,0.55),
                   0 1px 0 rgba(255,255,255,0.35)
                 `,
@@ -137,25 +224,43 @@ export function ProductVisual({
                 outline:
                   mode === "puzzle"
                     ? `2px dashed color-mix(in srgb, ${finishHex} 70%, black)`
-                    : undefined,
-                outlineOffset: mode === "puzzle" ? "6px" : undefined,
+                    : "2px dashed transparent",
+                outlineOffset: "6px",
                 transition: "opacity 0.5s ease, outline-color 0.5s ease",
               }}
               aria-hidden
             />
 
-            {/* lick-mode inner sheen (soft silicone pad cue) */}
-            {mode === "lick" && (
-              <div
-                className="absolute inset-[30%] rounded-full"
+            {/* LICK — soft silicone pad cue (always mounted, cross-fades) */}
+            <div
+              className="absolute inset-[30%] rounded-full"
+              style={{
+                background: `radial-gradient(circle at 50% 45%, color-mix(in srgb, ${finishHex} 25%, white), color-mix(in srgb, ${finishHex} 12%, white))`,
+                boxShadow: "inset 0 4px 12px rgba(28,26,23,0.12)",
+                ...cue(mode === "lick"),
+              }}
+              aria-hidden
+            />
+            {/* LICK — treat morsels in the well */}
+            {[
+              { t: "32%", l: "42%" },
+              { t: "48%", l: "56%" },
+              { t: "58%", l: "38%" },
+            ].map((p, i) => (
+              <span
+                key={`lick-treat-${i}`}
+                className="absolute h-2 w-2 rounded-full sm:h-2.5 sm:w-2.5"
                 style={{
-                  background: `radial-gradient(circle at 50% 45%, color-mix(in srgb, ${finishHex} 25%, white), color-mix(in srgb, ${finishHex} 12%, white))`,
-                  boxShadow: "inset 0 4px 12px rgba(28,26,23,0.1)",
-                  opacity: 0.9,
+                  top: p.t,
+                  left: p.l,
+                  background:
+                    "radial-gradient(circle at 35% 30%, #e8c9a0, #c4a06a)",
+                  boxShadow: "inset 0 -1px 2px rgba(0,0,0,0.2)",
+                  ...cue(mode === "lick", `${60 + i * 40}ms`),
                 }}
                 aria-hidden
               />
-            )}
+            ))}
 
             {/* center hub */}
             <div
@@ -184,25 +289,71 @@ export function ProductVisual({
               aria-hidden
             />
 
-            {/* roll cue — motion arcs */}
-            {mode === "roll" && (
-              <>
-                <span
-                  className="absolute -left-6 top-1/2 h-14 w-1 rounded-full opacity-50"
-                  style={{
-                    background: `linear-gradient(180deg, transparent, color-mix(in srgb, ${finishHex} 70%, black), transparent)`,
-                  }}
-                  aria-hidden
-                />
-                <span
-                  className="absolute -right-5 top-1/3 h-10 w-1 rounded-full opacity-40"
-                  style={{
-                    background: `linear-gradient(180deg, transparent, color-mix(in srgb, ${finishHex} 70%, black), transparent)`,
-                  }}
-                  aria-hidden
-                />
-              </>
-            )}
+            {/* ROLL — motion arcs (always mounted) */}
+            <span
+              className="absolute -left-7 top-1/2 h-16 w-1.5 rounded-full"
+              style={{
+                background: `linear-gradient(180deg, transparent, color-mix(in srgb, ${finishHex} 75%, black), transparent)`,
+                ...cue(mode === "roll"),
+              }}
+              aria-hidden
+            />
+            <span
+              className="absolute -right-6 top-1/3 h-12 w-1.5 rounded-full"
+              style={{
+                background: `linear-gradient(180deg, transparent, color-mix(in srgb, ${finishHex} 75%, black), transparent)`,
+                ...cue(mode === "roll", "50ms"),
+              }}
+              aria-hidden
+            />
+            <span
+              className="absolute -right-4 bottom-1/4 h-8 w-1 rounded-full"
+              style={{
+                background: `linear-gradient(180deg, transparent, color-mix(in srgb, ${finishHex} 60%, black), transparent)`,
+                ...cue(mode === "roll", "100ms"),
+              }}
+              aria-hidden
+            />
+            {/* ROLL — kibble beads sitting in the track */}
+            {[18, 130, 250].map((deg, i) => (
+              <span
+                key={`roll-bead-${deg}`}
+                className="absolute left-1/2 top-1/2 h-2 w-2 rounded-full sm:h-2.5 sm:w-2.5"
+                style={{
+                  background:
+                    "radial-gradient(circle at 35% 30%, #e8c9a0, #c4a06a)",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.25)",
+                  transform: `rotate(${deg}deg) translate(4.6rem, -50%) rotate(${-deg}deg) translate(-50%, -50%)`,
+                  ...cue(mode === "roll", `${80 + i * 50}ms`),
+                }}
+                aria-hidden
+              />
+            ))}
+
+            {/* PUZZLE — treat gate across the track (always mounted) */}
+            <div
+              className="absolute left-1/2 top-[27%] h-3 w-10 -translate-x-1/2 rounded-sm sm:h-3.5 sm:w-14"
+              style={{
+                background: `linear-gradient(180deg, color-mix(in srgb, ${finishHex} 70%, black), color-mix(in srgb, ${finishHex} 45%, black))`,
+                boxShadow:
+                  "0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25)",
+                ...cue(mode === "puzzle"),
+              }}
+              aria-hidden
+            />
+            {/* PUZZLE — blocked path ticks on the gate side */}
+            {[40, 140, 260].map((deg) => (
+              <span
+                key={`puz-tick-${deg}`}
+                className="absolute left-1/2 top-1/2 h-1.5 w-1.5 rounded-full"
+                style={{
+                  background: `color-mix(in srgb, ${finishHex} 80%, black)`,
+                  transform: `rotate(${deg}deg) translateY(-5.4rem) translate(-50%, -50%)`,
+                  ...cue(mode === "puzzle"),
+                }}
+                aria-hidden
+              />
+            ))}
 
             {/* mode tick marks on outer rim */}
             {[0, 120, 240].map((deg) => (
@@ -210,7 +361,7 @@ export function ProductVisual({
                 key={deg}
                 className="absolute left-1/2 top-1/2 h-1.5 w-1.5 rounded-full bg-ivory/85 shadow-[0_1px_2px_rgba(0,0,0,0.25)]"
                 style={{
-                  transform: `rotate(${deg}deg) translateY(-7.2rem) translate(-50%, -50%)`,
+                  transform: `rotate(${deg}deg) translateY(-7.6rem) translate(-50%, -50%)`,
                   transformOrigin: "center",
                 }}
                 aria-hidden
@@ -228,9 +379,6 @@ export function ProductVisual({
               <p className="text-xs uppercase tracking-[0.16em] text-muted">
                 {finishName} finish
               </p>
-            </div>
-            <div className="rounded-full border border-line bg-white/70 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-muted backdrop-blur">
-              Product render
             </div>
           </div>
         )}

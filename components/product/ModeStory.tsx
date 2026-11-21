@@ -10,7 +10,7 @@ import {
 } from "framer-motion";
 import { useRef } from "react";
 import { ProductVisual } from "@/components/product/ProductVisual";
-import { PRODUCT, getFinish } from "@/lib/product";
+import { PRODUCT } from "@/lib/product";
 import { EASE } from "@/components/motion/Reveal";
 
 type ModeId = "lick" | "roll" | "puzzle";
@@ -70,9 +70,12 @@ export function ModeStory() {
     offset: ["start end", "end start"],
   });
 
-  const productY = useTransform(scrollYProgress, [0, 1], [40, -40]);
-  const productScale = useTransform(scrollYProgress, [0, 0.4, 0.7, 1], [0.96, 1.02, 1.02, 0.98]);
-  const glow = useTransform(scrollYProgress, [0, 0.5, 1], [0.35, 0.55, 0.4]);
+  const productY = useTransform(scrollYProgress, [0, 1], [56, -56]);
+  const productScale = useTransform(
+    scrollYProgress,
+    [0, 0.35, 0.65, 1],
+    [0.94, 1.04, 1.04, 0.97],
+  );
 
   const active = MODES.find((m) => m.id === mode) ?? MODES[0];
 
@@ -92,35 +95,26 @@ export function ModeStory() {
           </p>
         </div>
 
-        {/* Mode explorer */}
+        {/* Mode explorer — product stays mounted; only its pose/state changes */}
         <div
           ref={storyRef}
-          className="mt-12 grid items-center gap-8 lg:grid-cols-[1fr_1fr] lg:gap-14"
+          className="mt-10 grid items-start gap-8 lg:mt-14 lg:grid-cols-[1fr_1fr] lg:gap-14"
         >
           {/* product — continuous object */}
-          <div className="relative order-1 lg:order-2">
+          <div className="relative order-1 lg:order-2 lg:sticky lg:top-24">
             <div className="relative overflow-hidden rounded-[1.75rem] border border-line bg-gradient-to-br from-white/70 via-ivory to-sand/30 shadow-[0_36px_70px_-40px_rgba(28,26,23,0.3)]">
               <motion.div
                 style={reduced ? undefined : { y: productY, scale: productScale }}
                 className="relative"
               >
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={mode}
-                    initial={reduced ? false : { opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={reduced ? undefined : { opacity: 0, scale: 1.01 }}
-                    transition={{ duration: 0.45, ease: EASE }}
-                  >
-                    <ProductVisual
-                      finishHex={finish.hex}
-                      finishName={finish.name}
-                      mode={mode}
-                      bare
-                      className="min-h-[320px] sm:min-h-[400px]"
-                    />
-                  </motion.div>
-                </AnimatePresence>
+                {/* Single persistent mount — never unmounts on mode change */}
+                <ProductVisual
+                  finishHex={finish.hex}
+                  finishName={finish.name}
+                  mode={mode}
+                  bare
+                  className="min-h-[320px] sm:min-h-[400px]"
+                />
               </motion.div>
 
               {/* mode label */}
@@ -136,7 +130,7 @@ export function ModeStory() {
           </div>
 
           {/* tabs + copy */}
-          <div className="order-2 lg:order-1">
+          <div className="order-2 lg:order-1 lg:pt-2">
             <div
               role="tablist"
               aria-label="Enrichment modes"
@@ -187,6 +181,7 @@ export function ModeStory() {
               })}
             </div>
 
+            {/* Copy panel crossfades; the product above never does */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={active.id}
@@ -198,7 +193,7 @@ export function ModeStory() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduced ? undefined : { opacity: 0, y: -8 }}
                 transition={{ duration: 0.4, ease: EASE }}
-                className="mt-7 rounded-2xl border border-line bg-ivory/70 p-6 sm:p-7"
+                className="mt-6 rounded-2xl border border-line bg-ivory/70 p-6 sm:p-7"
               >
                 <p className="font-display text-2xl text-charcoal">
                   {active.label}

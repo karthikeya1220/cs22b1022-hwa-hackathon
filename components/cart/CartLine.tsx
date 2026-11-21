@@ -2,6 +2,7 @@
 
 import { PRODUCT, formatPrice, getFinish } from "@/lib/product";
 import { useCart, type CartItem } from "@/lib/cart-context";
+import { ProductVisual } from "@/components/product/ProductVisual";
 
 type Props = {
   item: CartItem;
@@ -16,12 +17,17 @@ export function CartLine({ item, compact = false }: Props) {
   return (
     <div className="flex gap-4">
       <div
-        className={`${compact ? "h-16 w-16" : "h-20 w-20"} shrink-0 rounded-xl border border-line`}
-        style={{
-          background: `radial-gradient(circle at 35% 30%, color-mix(in srgb, ${finish?.hex ?? "#c45c3e"} 70%, white), ${finish?.hex ?? "#c45c3e"})`,
-        }}
+        className={`${compact ? "h-16 w-16" : "h-20 w-20"} shrink-0 overflow-hidden rounded-xl border border-line bg-gradient-to-br from-white/70 via-ivory to-sand/30`}
         aria-hidden
-      />
+      >
+        <ProductVisual
+          finishHex={finish?.hex ?? "#c45c3e"}
+          finishName={finish?.name ?? "Clay"}
+          bare
+          compact
+          className="h-full w-full"
+        />
+      </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">

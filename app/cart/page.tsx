@@ -117,7 +117,7 @@ export default function CartPage() {
               Simulated checkout — no real payment is processed.
             </p>
             <p className="mt-4 border-t border-line pt-4 text-xs text-muted">
-              {PRODUCT.name} · 30-day calm guarantee · Free returns
+              {PRODUCT.name} · Simulated demo checkout
             </p>
           </aside>
         </div>

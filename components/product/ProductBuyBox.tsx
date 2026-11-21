@@ -118,8 +118,7 @@ export function ProductBuyBox() {
             </div>
 
             <p className="text-xs leading-relaxed text-muted">
-              Ships in 2–4 days · 30-day calm guarantee · Checkout is a
-              simulated demo — no real payment is processed.
+              Checkout is a simulated demo — no real payment is processed.
             </p>
           </div>
 
