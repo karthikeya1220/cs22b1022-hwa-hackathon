@@ -1,3 +1,7 @@
+"use client";
+
+import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/Reveal";
+
 const specs = [
   ["Product", "ROLLOVER ONE"],
   ["Modes", "Lick · Roll · Puzzle"],
@@ -12,10 +16,20 @@ const specs = [
 
 export function Specs() {
   return (
-    <section className="border-t border-line bg-charcoal text-ivory">
-      <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
+    <section className="relative overflow-hidden border-t border-line bg-charcoal text-ivory">
+      {/* soft depth wash */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-40"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 50% at 15% 20%, rgba(196,92,62,0.18), transparent 55%), radial-gradient(ellipse 50% 40% at 90% 80%, rgba(212,196,168,0.1), transparent 50%)",
+        }}
+        aria-hidden
+      />
+
+      <div className="relative mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-          <div>
+          <Reveal>
             <p className="text-xs font-medium uppercase tracking-[0.28em] text-clay-soft">
               Specifications
             </p>
@@ -26,19 +40,18 @@ export function Specs() {
               Every material choice is for quieter sessions, easier cleaning,
               and a silhouette you will not hide when guests come over.
             </p>
-          </div>
+          </Reveal>
 
-          <dl className="divide-y divide-ivory/10 border-y border-ivory/10">
+          <StaggerGroup className="divide-y divide-ivory/10 border-y border-ivory/10">
             {specs.map(([k, v]) => (
-              <div
-                key={k}
-                className="grid grid-cols-[minmax(7rem,0.4fr)_1fr] gap-4 py-4 text-sm"
-              >
-                <dt className="text-ivory/55">{k}</dt>
-                <dd className="text-ivory">{v}</dd>
-              </div>
+              <StaggerItem key={k}>
+                <div className="grid grid-cols-[minmax(7rem,0.4fr)_1fr] gap-4 py-4 text-sm transition-colors hover:bg-ivory/[0.03]">
+                  <dt className="text-ivory/55">{k}</dt>
+                  <dd className="text-ivory">{v}</dd>
+                </div>
+              </StaggerItem>
             ))}
-          </dl>
+          </StaggerGroup>
         </div>
       </div>
     </section>

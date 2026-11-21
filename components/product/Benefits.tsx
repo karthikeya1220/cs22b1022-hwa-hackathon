@@ -1,3 +1,7 @@
+"use client";
+
+import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/Reveal";
+
 const benefits = [
   {
     title: "Wears them out indoors",
@@ -22,7 +26,7 @@ export function Benefits() {
     <section className="border-t border-line">
       <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="lg:sticky lg:top-24 lg:self-start">
+          <Reveal className="lg:sticky lg:top-24 lg:self-start">
             <p className="text-xs font-medium uppercase tracking-[0.28em] text-clay">
               Why ONE
             </p>
@@ -33,21 +37,22 @@ export function Benefits() {
               Built for dogs who need a job, and people who want their living
               room back.
             </p>
-          </div>
+          </Reveal>
 
-          <ul className="grid gap-4 sm:grid-cols-2">
+          <StaggerGroup className="grid gap-4 sm:grid-cols-2">
             {benefits.map((b) => (
-              <li
-                key={b.title}
-                className="rounded-2xl border border-line bg-ivory-deep/40 p-6"
-              >
-                <h3 className="font-display text-lg text-charcoal">{b.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {b.body}
-                </p>
-              </li>
+              <StaggerItem key={b.title}>
+                <article className="group h-full rounded-2xl border border-line bg-ivory-deep/40 p-6 transition duration-300 hover:-translate-y-0.5 hover:border-charcoal/20 hover:bg-white/70 hover:shadow-[0_16px_40px_-28px_rgba(28,26,23,0.35)]">
+                  <h3 className="font-display text-lg text-charcoal">
+                    {b.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {b.body}
+                  </p>
+                </article>
+              </StaggerItem>
             ))}
-          </ul>
+          </StaggerGroup>
         </div>
       </div>
     </section>

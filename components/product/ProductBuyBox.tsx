@@ -2,33 +2,43 @@
 
 import { useState } from "react";
 import { FinishSelector } from "@/components/product/FinishSelector";
-import { ProductVisual } from "@/components/product/ProductVisual";
+import { ProductStage } from "@/components/product/ProductStage";
+import { Reveal } from "@/components/motion/Reveal";
 import { PRODUCT, formatPrice, getFinish } from "@/lib/product";
 import { useCart } from "@/lib/cart-context";
 
 export function ProductBuyBox() {
   const [finishId, setFinishId] = useState<string>(PRODUCT.finishes[0].id);
   const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
   const { addItem } = useCart();
   const finish = getFinish(finishId) ?? PRODUCT.finishes[0];
   const lineTotal = PRODUCT.price * qty;
 
+  const handleAdd = () => {
+    addItem(finish.id, qty);
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 1400);
+  };
+
   return (
     <div id="product" className="scroll-mt-24">
       <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
-        <ProductVisual
-          finishHex={finish.hex}
-          finishName={finish.name}
-          className="lg:sticky lg:top-24 lg:self-start lg:min-h-[520px]"
-        />
+        <div className="lg:sticky lg:top-24 lg:self-start">
+          <ProductStage
+            finish={finish}
+            tilt
+            frameClassName="min-h-[340px] sm:min-h-[440px] lg:min-h-[520px] shadow-[0_36px_70px_-36px_rgba(28,26,23,0.35)]"
+          />
+        </div>
 
-        <div className="lg:pt-2">
+        <Reveal className="lg:pt-2" delay={0.05}>
           <p className="text-xs font-medium uppercase tracking-[0.28em] text-clay">
             The enrichment device
           </p>
-          <h1 className="mt-3 font-display text-4xl leading-[1.05] tracking-tight text-charcoal sm:text-5xl">
+          <h2 className="mt-3 font-display text-4xl leading-[1.05] tracking-tight text-charcoal sm:text-5xl">
             {PRODUCT.name}
-          </h1>
+          </h2>
           <p className="mt-3 text-lg text-muted">{PRODUCT.tagline}</p>
 
           <div className="mt-6 flex items-baseline gap-3">
@@ -99,10 +109,11 @@ export function ProductBuyBox() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
-                onClick={() => addItem(finish.id, qty)}
+                onClick={handleAdd}
                 className="flex-1 rounded-full bg-charcoal px-8 py-4 text-sm font-medium tracking-wide text-ivory shadow-[0_10px_30px_-12px_rgba(28,26,23,0.45)] transition hover:bg-clay hover:shadow-[0_14px_34px_-12px_rgba(196,92,62,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay active:scale-[0.99]"
+                aria-live="polite"
               >
-                Add to cart — {formatPrice(lineTotal)}
+                {added ? "Added to cart ✓" : `Add to cart — ${formatPrice(lineTotal)}`}
               </button>
             </div>
 
@@ -138,7 +149,7 @@ export function ProductBuyBox() {
               </dd>
             </div>
           </dl>
-        </div>
+        </Reveal>
       </div>
     </div>
   );

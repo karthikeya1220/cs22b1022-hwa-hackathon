@@ -3,6 +3,7 @@ import { CartProvider } from "@/lib/cart-context";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { MobileBuyBar } from "@/components/product/MobileBuyBar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <CartDrawer />
+          <MobileBuyBar />
         </CartProvider>
       </body>
     </html>
