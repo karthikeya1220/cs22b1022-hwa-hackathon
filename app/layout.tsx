@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CartProvider } from "@/lib/cart-context";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <CartDrawer />
         </CartProvider>
       </body>
     </html>
