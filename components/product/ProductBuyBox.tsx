@@ -1,19 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FinishSelector } from "@/components/product/FinishSelector";
-import { ProductStage } from "@/components/product/ProductStage";
+import { ProductFrame } from "@/components/three/ProductFrame";
 import { Reveal } from "@/components/motion/Reveal";
 import { PRODUCT, formatPrice, getFinish } from "@/lib/product";
 import { useCart } from "@/lib/cart-context";
+import { useProductScene } from "@/lib/three/product-scene";
 
 export function ProductBuyBox() {
   const [finishId, setFinishId] = useState<string>(PRODUCT.finishes[0].id);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const { addItem } = useCart();
+  const scene = useProductScene();
   const finish = getFinish(finishId) ?? PRODUCT.finishes[0];
   const lineTotal = PRODUCT.price * qty;
+
+  // Keep3D material and local selector in sync
+  useEffect(() => {
+    scene.setFinishId(finish.id as typeof scene.finishId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finish.id]);
+
+  // External finish changes (e.g. from3D context) update the selector
+  useEffect(() => {
+    if (scene.finishId !== finishId) {
+      setFinishId(scene.finishId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene.finishId]);
 
   const handleAdd = () => {
     addItem(finish.id, qty);
@@ -25,7 +41,8 @@ export function ProductBuyBox() {
     <div id="product" className="scroll-mt-24">
       <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
         <div className="lg:sticky lg:top-24 lg:self-start">
-          <ProductStage
+          <ProductFrame
+            stage="buy"
             finish={finish}
             tilt
             frameClassName="min-h-[340px] sm:min-h-[440px] lg:min-h-[520px] shadow-[0_36px_70px_-36px_rgba(28,26,23,0.35)]"

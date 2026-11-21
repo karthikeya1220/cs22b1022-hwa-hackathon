@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   motion,
   AnimatePresence,
@@ -9,9 +9,10 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import { useRef } from "react";
-import { ProductVisual } from "@/components/product/ProductVisual";
+import { ProductFrame } from "@/components/three/ProductFrame";
 import { PRODUCT } from "@/lib/product";
 import { EASE } from "@/components/motion/Reveal";
+import { useProductScene } from "@/lib/three/product-scene";
 
 type ModeId = "lick" | "roll" | "puzzle";
 
@@ -64,17 +65,31 @@ export function ModeStory() {
   const finish = PRODUCT.finishes[0];
   const reduced = useReducedMotion();
   const storyRef = useRef<HTMLDivElement>(null);
+  const scene = useProductScene();
+
+  // Sync mode to the shared3D scene (and accept external changes)
+  useEffect(() => {
+    scene.setMode(mode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
+
+  useEffect(() => {
+    if (scene.mode !== mode && (scene.mode === "lick" || scene.mode === "roll" || scene.mode === "puzzle")) {
+      setMode(scene.mode);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene.mode]);
 
   const { scrollYProgress } = useScroll({
     target: storyRef,
     offset: ["start end", "end start"],
   });
 
-  const productY = useTransform(scrollYProgress, [0, 1], [56, -56]);
+  const productY = useTransform(scrollYProgress, [0, 1], [18, -18]);
   const productScale = useTransform(
     scrollYProgress,
     [0, 0.35, 0.65, 1],
-    [0.94, 1.04, 1.04, 0.97],
+    [0.96, 1.02, 1.02, 0.98],
   );
 
   const active = MODES.find((m) => m.id === mode) ?? MODES[0];
@@ -102,20 +117,19 @@ export function ModeStory() {
         >
           {/* product — continuous object */}
           <div className="relative order-1 lg:order-2 lg:sticky lg:top-24">
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-line bg-gradient-to-br from-white/70 via-ivory to-sand/30 shadow-[0_36px_70px_-40px_rgba(28,26,23,0.3)]">
-              <motion.div
-                style={reduced ? undefined : { y: productY, scale: productScale }}
-                className="relative"
-              >
-                {/* Single persistent mount — never unmounts on mode change */}
-                <ProductVisual
-                  finishHex={finish.hex}
-                  finishName={finish.name}
-                  mode={mode}
-                  bare
-                  className="min-h-[320px] sm:min-h-[400px]"
-                />
-              </motion.div>
+            <motion.div
+              style={reduced ? undefined : { y: productY, scale: productScale }}
+              className="relative"
+            >
+              {/* Single shared3D stage — product never remounts on mode change */}
+              <ProductFrame
+                stage="modes"
+                finish={finish}
+                mode={mode}
+                bare
+                frameClassName="min-h-[320px] sm:min-h-[400px]"
+              />
+            </motion.div>
 
               {/* mode label */}
               <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
@@ -126,7 +140,6 @@ export function ModeStory() {
                   {active.n} / 03
                 </span>
               </div>
-            </div>
           </div>
 
           {/* tabs + copy */}

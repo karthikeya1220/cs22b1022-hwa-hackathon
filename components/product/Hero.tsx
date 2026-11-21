@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { PRODUCT, formatPrice } from "@/lib/product";
-import { ProductStage } from "@/components/product/ProductStage";
+import { ProductFrame } from "@/components/three/ProductFrame";
 import { Tilt } from "@/components/motion/Tilt";
 import { EASE } from "@/components/motion/Reveal";
 
@@ -110,7 +110,8 @@ export function Hero() {
           className="relative mx-auto w-full max-w-md sm:max-w-lg lg:max-w-none"
         >
           <Tilt enabled max={6} scale={1.02}>
-            <ProductStage
+            <ProductFrame
+              stage="hero"
               finish={finish}
               frameClassName="min-h-[300px] sm:min-h-[440px] lg:min-h-[560px] shadow-[0_48px_90px_-40px_rgba(28,26,23,0.4)]"
             />
