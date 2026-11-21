@@ -2,6 +2,7 @@ node_modules/
 .hwa/
 .vercel/
 .env*
+!.env.example
 init.py
 init (*).py
 submit.py
