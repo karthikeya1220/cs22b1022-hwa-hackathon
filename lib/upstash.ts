@@ -2,13 +2,18 @@ const URL_KEY = "UPSTASH_REDIS_REST_URL";
 const TOKEN_KEY = "UPSTASH_REDIS_REST_TOKEN";
 
 function getConfig() {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = process.env[URL_KEY];
+  const token = process.env[TOKEN_KEY];
   if (!url || !token) {
     return null;
   }
   return { url: url.replace(/\/$/, ""), token };
 }
+
+type UpstashResponse<T> = {
+  result?: T;
+  error?: string;
+};
 
 export async function redisCommand<T>(
   command: (string | number)[],
@@ -28,12 +33,20 @@ export async function redisCommand<T>(
     cache: "no-store",
   });
 
+  const data = (await res.json().catch(() => null)) as
+    | UpstashResponse<T>
+    | null;
+
   if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Upstash request failed (${res.status}): ${text}`);
+    throw new Error(
+      `Upstash request failed (${res.status}): ${data?.error ?? "unknown"}`,
+    );
+  }
+  if (data?.error) {
+    throw new Error(`Upstash error: ${data.error}`);
   }
 
-  return (await res.json()) as T;
+  return data?.result as T;
 }
 
 export async function redisSet(key: string, value: string, ttlSeconds: number) {
