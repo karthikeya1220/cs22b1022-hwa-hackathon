@@ -12,9 +12,13 @@ export function FinishSelector({ finishes, value, onChange }: Props) {
   return (
     <fieldset>
       <legend className="text-xs font-medium uppercase tracking-[0.2em] text-muted">
-        Finish
+        Finish — <span className="normal-case tracking-normal text-charcoal">{finishes.find((f) => f.id === value)?.name}</span>
       </legend>
-      <div className="mt-3 flex flex-wrap gap-3" role="radiogroup" aria-label="Finish">
+      <div
+        className="mt-3 flex flex-wrap gap-3"
+        role="radiogroup"
+        aria-label="Finish"
+      >
         {finishes.map((f) => {
           const active = f.id === value;
           return (
@@ -23,7 +27,20 @@ export function FinishSelector({ finishes, value, onChange }: Props) {
               type="button"
               role="radio"
               aria-checked={active}
+              tabIndex={active ? 0 : -1}
               onClick={() => onChange(f.id)}
+              onKeyDown={(e) => {
+                const idx = finishes.findIndex((x) => x.id === value);
+                if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  onChange(finishes[(idx + 1) % finishes.length].id);
+                } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                  e.preventDefault();
+                  onChange(
+                    finishes[(idx - 1 + finishes.length) % finishes.length].id,
+                  );
+                }
+              }}
               className={`group flex items-center gap-3 rounded-full border px-4 py-2.5 text-left transition ${
                 active
                   ? "border-charcoal bg-white/70 shadow-[0_1px_0_rgba(28,26,23,0.06)]"

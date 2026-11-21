@@ -14,7 +14,10 @@ export function ProductVisual({ finishHex, finishName, className = "" }: Props) 
       <div className="absolute inset-0 opacity-[0.35] [background-image:radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.9),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(212,196,168,0.5),transparent_45%)]" />
 
       <div className="relative flex h-full min-h-[320px] items-center justify-center p-8 sm:min-h-[420px]">
-        <div className="relative h-56 w-56 sm:h-72 sm:w-72">
+        <div
+        className="relative h-56 w-56 transition-[background] duration-500 ease-out sm:h-72 sm:w-72"
+        key={finishHex}
+      >
           {/* outer ring / roller body */}
           <div
             className="absolute inset-0 rounded-full shadow-[0_30px_60px_-20px_rgba(28,26,23,0.35)] ring-1 ring-charcoal/10"

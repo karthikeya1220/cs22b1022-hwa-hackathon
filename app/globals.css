@@ -26,6 +26,20 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   background: var(--color-ivory);
   color: var(--color-charcoal);
@@ -34,9 +48,36 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-clay);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 ::selection {
   background: var(--color-clay);
   color: var(--color-ivory);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  border-radius: 9999px;
+  background: var(--color-charcoal);
+  color: var(--color-ivory);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  transition: top 0.2s var(--ease-out-soft);
+}
+
+.skip-link:focus {
+  top: 1rem;
 }
 
 @keyframes fade-up {
@@ -50,6 +91,46 @@ body {
   }
 }
 
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-badge {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
 .animate-fade-up {
   animation: fade-up 0.7s var(--ease-out-soft) both;
+}
+
+.animate-drawer-in {
+  animation: drawer-in 0.4s var(--ease-out-soft) both;
+}
+
+.animate-backdrop-in {
+  animation: backdrop-in 0.3s ease both;
+}
+
+.animate-badge-pop {
+  animation: pulse-badge 0.35s var(--ease-out-soft);
 }

@@ -36,7 +36,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-14 grid grid-cols-3 gap-3 sm:gap-4 max-w-2xl">
+          <div className="mt-14 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
             {[
               ["3", "enrichment modes"],
               ["1", "object, not a toy bin"],

@@ -19,9 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
+        <a href="#main" className="skip-link">
+          Skip to main content
+        </a>
         <CartProvider>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main id="main" tabIndex={-1} className="flex-1 outline-none">
+            {children}
+          </main>
           <Footer />
           <CartDrawer />
         </CartProvider>

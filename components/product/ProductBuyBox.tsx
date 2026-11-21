@@ -100,7 +100,7 @@ export function ProductBuyBox() {
               <button
                 type="button"
                 onClick={() => addItem(finish.id, qty)}
-                className="flex-1 rounded-full bg-charcoal px-8 py-4 text-sm font-medium tracking-wide text-ivory transition hover:bg-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+                className="flex-1 rounded-full bg-charcoal px-8 py-4 text-sm font-medium tracking-wide text-ivory shadow-[0_10px_30px_-12px_rgba(28,26,23,0.45)] transition hover:bg-clay hover:shadow-[0_14px_34px_-12px_rgba(196,92,62,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay active:scale-[0.99]"
               >
                 Add to cart — {formatPrice(lineTotal)}
               </button>

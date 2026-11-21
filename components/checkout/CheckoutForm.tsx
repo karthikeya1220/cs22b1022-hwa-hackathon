@@ -387,9 +387,20 @@ export function CheckoutForm() {
         <button
           type="submit"
           disabled={submitting}
+          aria-busy={submitting}
           className="w-full rounded-full bg-charcoal px-8 py-4 text-sm font-medium tracking-wide text-ivory transition hover:bg-clay disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
-          {submitting ? "Placing test order…" : `Place test order — ${totalsLabel}`}
+          {submitting ? (
+            <span className="inline-flex items-center gap-2">
+              <span
+                className="h-4 w-4 animate-spin rounded-full border-2 border-ivory/30 border-t-ivory"
+                aria-hidden
+              />
+              Placing test order…
+            </span>
+          ) : (
+            `Place test order — ${totalsLabel}`
+          )}
         </button>
         <p className="text-xs leading-relaxed text-muted">
           By placing a test order you agree this is a simulated demo. Customer
